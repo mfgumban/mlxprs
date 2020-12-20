@@ -11,6 +11,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 import { XqyDebugConfigurationProvider, XqyDebugAdapterDescriptorFactory } from './XQDebugger/xqyDebugConfigProvider'
 import { MLConfigurationProvider, DebugAdapterExecutableFactory, _connectServer, _disconnectServer } from './JSDebugger/configurationProvider'
 import { ModuleContentProvider, pickAndShowModule } from './vscModuleContentProvider'
+import { DatabasesProvider } from './explorer/databasesProvider'
 
 const MLDBCLIENT = 'mldbClient'
 const SJS = 'sjs'
@@ -146,6 +147,13 @@ export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('xquery-ml', xqyDbgProvider))
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('xquery-ml', xqyDebugFactory))
     context.subscriptions.push(xqyDebugFactory as never)
+
+    // view container 
+    const documentsProvider = new DatabasesProvider()
+    vscode.window.registerTreeDataProvider('ml-explorer-documents', documentsProvider)
+
+    const databasesProvider = new DatabasesProvider()
+    vscode.window.registerTreeDataProvider('ml-explorer-databases', databasesProvider)
 }
 
 // this method is called when your extension is deactivated
